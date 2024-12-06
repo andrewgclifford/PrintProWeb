@@ -3,42 +3,65 @@ from .models import Job, JobFile, Comment
 
 class JobForm(forms.ModelForm):
     files = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        widget=forms.ClearableFileInput(attrs={'multiple': True, 'class': 'form-control'}),
         required=False
     )
     
     class Meta:
         model = Job
         fields = [
-            'job_number',
             'title',
             'description',
             'client',
             'job_type',
             'priority',
-            'due_date',
+            'deadline',
             'quantity',
-            'paper_size',
             'paper_type',
-            'special_instructions'
+            'size',
+            'is_rush',
+            'notes'
         ]
         widgets = {
-            'due_date': forms.DateInput(attrs={'type': 'date'}),
-            'description': forms.Textarea(attrs={'rows': 3}),
-            'special_instructions': forms.Textarea(attrs={'rows': 3}),
-            'job_type': forms.Select(attrs={'class': 'form-select'}),
-            'priority': forms.Select(attrs={'class': 'form-select'}),
-            'client': forms.Select(attrs={'class': 'form-select'}),
+            'deadline': forms.DateTimeInput(
+                attrs={'type': 'datetime-local', 'class': 'form-control'}
+            ),
+            'description': forms.Textarea(
+                attrs={'rows': 3, 'class': 'form-control'}
+            ),
+            'notes': forms.Textarea(
+                attrs={'rows': 3, 'class': 'form-control'}
+            ),
+            'job_type': forms.Select(
+                attrs={'class': 'form-select'}
+            ),
+            'priority': forms.Select(
+                attrs={'class': 'form-select'}
+            ),
+            'client': forms.Select(
+                attrs={'class': 'form-select'}
+            ),
+            'title': forms.TextInput(
+                attrs={'class': 'form-control'}
+            ),
+            'quantity': forms.NumberInput(
+                attrs={'class': 'form-control', 'min': '1'}
+            ),
+            'paper_type': forms.TextInput(
+                attrs={'class': 'form-control'}
+            ),
+            'size': forms.TextInput(
+                attrs={'class': 'form-control'}
+            ),
+            'is_rush': forms.CheckboxInput(
+                attrs={'class': 'form-check-input'}
+            ),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Add Bootstrap classes to all form fields
         for field in self.fields:
-            self.fields[field].widget.attrs.update({
-                'class': 'form-control'
-            })
-            if field != 'files':  # Don't add placeholder to file input
+            if field not in ['is_rush', 'files']:
                 self.fields[field].widget.attrs.update({
                     'placeholder': self.fields[field].label
                 })
