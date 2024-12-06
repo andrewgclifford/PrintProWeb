@@ -3,7 +3,7 @@ from .models import Job, JobFile, Comment
 
 class JobForm(forms.ModelForm):
     files = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={'multiple': True, 'class': 'form-control'}),
+        widget=forms.FileInput(attrs={'multiple': True, 'class': 'form-control'}),
         required=False
     )
     
