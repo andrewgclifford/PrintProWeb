@@ -45,6 +45,9 @@ MIDDLEWARE = [
 # Allow React development server
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
 
+# Root URL Configuration
+ROOT_URLCONF = 'print_tracker.urls'
+
 # Configure REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
