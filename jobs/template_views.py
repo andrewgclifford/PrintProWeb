@@ -66,17 +66,20 @@ def job_create(request):
         form = JobForm(request.POST, request.FILES)
         if form.is_valid():
             job = form.save(commit=False)
+            # Generate a unique job number
+            import uuid
+            job.job_number = str(uuid.uuid4().hex[:8]).upper()
             job.created_by = request.user
             job.save()
             
-            # Handle multiple file uploads
+            # Handle file uploads
             files = request.FILES.getlist('files')
             for file in files:
                 JobFile.objects.create(
                     job=job,
                     file=file,
-                    uploaded_by=request.user,
-                    file_type=file.content_type
+                    file_type=file.content_type,
+                    uploaded_by=request.user
                 )
             
             messages.success(request, 'Job created successfully.')
@@ -84,7 +87,7 @@ def job_create(request):
     else:
         form = JobForm()
     
-    return render(request, 'jobs/job_form.html', {'form': form, 'title': 'Create New Job'})
+    return render(request, 'jobs/create_job.html', {'form': form})
 
 @login_required
 def job_update(request, pk):
@@ -95,19 +98,19 @@ def job_update(request, pk):
         if form.is_valid():
             job = form.save()
             
-            # Handle multiple file uploads
+            # Handle file uploads
             files = request.FILES.getlist('files')
             for file in files:
                 JobFile.objects.create(
                     job=job,
                     file=file,
-                    uploaded_by=request.user,
-                    file_type=file.content_type
+                    file_type=file.content_type,
+                    uploaded_by=request.user
                 )
             
             messages.success(request, 'Job updated successfully.')
-            return redirect('job_detail', pk=job.pk)
+            return redirect('job_detail', pk=pk)
     else:
         form = JobForm(instance=job)
     
-    return render(request, 'jobs/job_form.html', {'form': form, 'title': 'Update Job'})
+    return render(request, 'jobs/update_job.html', {'form': form, 'job': job})
