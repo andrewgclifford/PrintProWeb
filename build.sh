@@ -19,4 +19,4 @@ python manage.py migrate jobs
 python manage.py migrate
 
 # Create superuser
-python manage.py create_superuser
+echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@example.com', 'admin123', user_type='admin') if not User.objects.filter(username='admin').exists() else None" | python manage.py shell

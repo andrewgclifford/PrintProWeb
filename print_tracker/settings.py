@@ -91,6 +91,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Add AUTH_USER_MODEL setting
 AUTH_USER_MODEL = 'accounts.User'
 
+# Superuser settings
+DJANGO_SUPERUSER_USERNAME = os.getenv('DJANGO_SUPERUSER_USERNAME', 'admin')
+DJANGO_SUPERUSER_EMAIL = os.getenv('DJANGO_SUPERUSER_EMAIL', 'admin@example.com')
+DJANGO_SUPERUSER_PASSWORD = os.getenv('DJANGO_SUPERUSER_PASSWORD', 'admin123')
+
 # Database settings
 DATABASES = {
     'default': {
