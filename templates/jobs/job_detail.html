@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+
+{% block title %}Job Details - {{ job.job_number }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Job Details Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Job Details</h4>
+                    <div>
+                        <a href="{% url 'job_update' job.pk %}" class="btn btn-light btn-sm">
+                            <i class="fas fa-edit me-1"></i>Edit
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Job Number</h5>
+                            <p class="text-muted">{{ job.job_number }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Status</h5>
+                            <span class="badge bg-{{ job.status }}">{{ job.get_status_display }}</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Title</h5>
+                            <p class="text-muted">{{ job.title }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Priority</h5>
+                            <span class="badge bg-{{ job.priority }}">{{ job.get_priority_display }}</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5>Description</h5>
+                            <p class="text-muted">{{ job.description|default:"No description provided." }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Client</h5>
+                            <p class="text-muted">{{ job.client }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Deadline</h5>
+                            <p class="text-muted">{{ job.deadline|date:"F j, Y, g:i a" }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <h5>Job Type</h5>
+                            <p class="text-muted">{{ job.get_job_type_display }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Quantity</h5>
+                            <p class="text-muted">{{ job.quantity }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Rush Job</h5>
+                            <p class="text-muted">{{ job.is_rush|yesno:"Yes,No" }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Paper Type</h5>
+                            <p class="text-muted">{{ job.paper_type|default:"Not specified" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Size</h5>
+                            <p class="text-muted">{{ job.size|default:"Not specified" }}</p>
+                        </div>
+                    </div>
+
+                    {% if job.notes %}
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5>Notes</h5>
+                            <p class="text-muted">{{ job.notes }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Files Section -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5>Files</h5>
+                            {% if job.files.exists %}
+                                <div class="list-group">
+                                {% for file in job.files.all %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <i class="fas fa-file me-2"></i>
+                                            {{ file.file.name|cut:"job_files/" }}
+                                        </div>
+                                        <div>
+                                            <small class="text-muted me-3">Uploaded by {{ file.uploaded_by.get_full_name|default:file.uploaded_by.username }}</small>
+                                            <a href="{{ file.file.url }}" class="btn btn-sm btn-primary" target="_blank">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No files uploaded.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Comments</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="mb-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ comment_form.content }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Comment</button>
+                    </form>
+
+                    {% if comments %}
+                        <div class="list-group">
+                        {% for comment in comments %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ comment.user.get_full_name|default:comment.user.username }}</h6>
+                                    <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+                                </div>
+                                <p class="mb-1">{{ comment.content }}</p>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No comments yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Timeline Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Timeline</h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-success"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Job Created</h6>
+                                <p class="timeline-text">{{ job.created_at|date:"F j, Y, g:i a" }}</p>
+                            </div>
+                        </div>
+                        {% if job.proof_approved %}
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-info"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Proof Approved</h6>
+                                <p class="timeline-text">
+                                    {{ job.proof_approved_at|date:"F j, Y, g:i a" }}<br>
+                                    by {{ job.proof_approved_by.get_full_name|default:job.proof_approved_by.username }}
+                                </p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="timeline-item">
+                            <div class="timeline-marker {% if job.status == 'completed' %}bg-success{% else %}bg-warning{% endif %}"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Current Status</h6>
+                                <p class="timeline-text">{{ job.get_status_display }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .timeline {
+        position: relative;
+        padding: 20px 0;
+    }
+    .timeline-item {
+        position: relative;
+        padding-left: 40px;
+        margin-bottom: 20px;
+    }
+    .timeline-marker {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+    }
+    .timeline-item:before {
+        content: '';
+        position: absolute;
+        left: 7px;
+        top: 15px;
+        height: 100%;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+    .timeline-item:last-child:before {
+        display: none;
+    }
+    .timeline-title {
+        margin-bottom: 5px;
+    }
+    .timeline-text {
+        color: #6c757d;
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
