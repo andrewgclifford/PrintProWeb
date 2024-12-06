@@ -23,14 +23,14 @@ class JobForm(forms.ModelForm):
             'notes'
         ]
         widgets = {
-            'deadline': forms.DateTimeInput(
-                attrs={'type': 'datetime-local', 'class': 'form-control'}
+            'title': forms.TextInput(
+                attrs={'class': 'form-control'}
             ),
             'description': forms.Textarea(
                 attrs={'rows': 3, 'class': 'form-control'}
             ),
-            'notes': forms.Textarea(
-                attrs={'rows': 3, 'class': 'form-control'}
+            'client': forms.Select(
+                attrs={'class': 'form-select'}
             ),
             'job_type': forms.Select(
                 attrs={'class': 'form-select'}
@@ -38,11 +38,9 @@ class JobForm(forms.ModelForm):
             'priority': forms.Select(
                 attrs={'class': 'form-select'}
             ),
-            'client': forms.Select(
-                attrs={'class': 'form-select'}
-            ),
-            'title': forms.TextInput(
-                attrs={'class': 'form-control'}
+            'deadline': forms.DateTimeInput(
+                attrs={'type': 'datetime-local', 'class': 'form-control'},
+                format='%Y-%m-%dT%H:%M'
             ),
             'quantity': forms.NumberInput(
                 attrs={'class': 'form-control', 'min': '1'}
@@ -56,15 +54,21 @@ class JobForm(forms.ModelForm):
             'is_rush': forms.CheckboxInput(
                 attrs={'class': 'form-check-input'}
             ),
+            'notes': forms.Textarea(
+                attrs={'rows': 3, 'class': 'form-control'}
+            ),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Add placeholders
         for field in self.fields:
             if field not in ['is_rush', 'files']:
-                self.fields[field].widget.attrs.update({
-                    'placeholder': self.fields[field].label
-                })
+                self.fields[field].widget.attrs['placeholder'] = self.fields[field].label
+
+        # Format initial datetime value for the deadline field
+        if self.instance.pk and self.instance.deadline:
+            self.initial['deadline'] = self.instance.deadline.strftime('%Y-%m-%dT%H:%M')
 
 class CommentForm(forms.ModelForm):
     class Meta:
