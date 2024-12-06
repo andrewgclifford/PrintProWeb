@@ -5,25 +5,25 @@ from django.conf import settings
 User = get_user_model()
 
 class Command(BaseCommand):
-    help = 'Creates a superuser with the specified username and password'
+    help = 'Creates a superuser if one does not exist'
 
-    def handle(self, *args, **options):
-        username = getattr(settings, 'DJANGO_SUPERUSER_USERNAME', 'admin')
-        email = getattr(settings, 'DJANGO_SUPERUSER_EMAIL', 'admin@example.com')
-        password = getattr(settings, 'DJANGO_SUPERUSER_PASSWORD', 'admin123')
-
-        if not username:
-            self.stdout.write(self.style.ERROR('Username must be set'))
-            return
+    def handle(self, *args, **kwargs):
+        username = settings.DJANGO_SUPERUSER_USERNAME
+        email = settings.DJANGO_SUPERUSER_EMAIL
+        password = settings.DJANGO_SUPERUSER_PASSWORD
 
         try:
-            if not User.objects.filter(username=username).exists():
-                User.objects.create_superuser(
-                    username=username,
-                    email=email,
-                    password=password,
-                    user_type='admin'
-                )
-                self.stdout.write(self.style.SUCCESS(f'Superuser {username} created successfully'))
-            else:
+            if User.objects.filter(username=username).exists():
                 self.stdout.write(self.style.SUCCESS(f'Superuser {username} already exists'))
+                return
+                
+            User.objects.create_superuser(
+                username=username,
+                email=email,
+                password=password,
+                user_type='admin'
+            )
+            self.stdout.write(self.style.SUCCESS(f'Superuser {username} created successfully'))
+            
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f'Error creating superuser: {str(e)}'))
