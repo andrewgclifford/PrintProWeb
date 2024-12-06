@@ -43,7 +43,11 @@ MIDDLEWARE = [
 ]
 
 # Allow React development server
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
+CORS_ALLOWED_ORIGINS = [
+    'https://printproweb.onrender.com',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
 
 # Root URL Configuration
 ROOT_URLCONF = 'print_tracker.urls'
