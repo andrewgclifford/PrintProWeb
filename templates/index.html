@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to PrintProWeb{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row align-items-center min-vh-75">
+        <div class="col-lg-6">
+            <h1 class="display-3 mb-4">Welcome to PrintProWeb</h1>
+            <p class="lead mb-4">
+                Streamline your print job management with our professional web-based solution. Track, manage, and optimize your printing workflow with ease.
+            </p>
+            <div class="d-grid gap-2 d-md-flex">
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </a>
+                <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg px-4">
+                    <i class="fas fa-user-plus me-2"></i>Register
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <img src="https://placehold.co/600x400" alt="PrintProWeb Dashboard" class="img-fluid rounded shadow-lg">
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mt-5 g-4">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Key Features</h2>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-tasks fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Job Tracking</h5>
+                    <p class="card-text">Monitor your print jobs in real-time with detailed status updates and notifications.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Analytics</h5>
+                    <p class="card-text">Get insights into your printing operations with comprehensive analytics and reports.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Team Management</h5>
+                    <p class="card-text">Collaborate with your team efficiently with role-based access control.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
